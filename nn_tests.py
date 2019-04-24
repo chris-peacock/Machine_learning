@@ -9,35 +9,35 @@ Original file is located at
 
 # Install the PyDrive wrapper & import libraries.
 # This only needs to be done once per notebook.
-!pip install -U -q PyDrive
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-from google.colab import auth
-from oauth2client.client import GoogleCredentials
+#!pip install -U -q PyDrive
+#from pydrive.auth import GoogleAuth
+#from pydrive.drive import GoogleDrive
+#from google.colab import auth
+#from oauth2client.client import GoogleCredentials
 
 # Authenticate and create the PyDrive client.
 # This only needs to be done once per notebook.
-auth.authenticate_user()
-gauth = GoogleAuth()
-gauth.credentials = GoogleCredentials.get_application_default()
-drive = GoogleDrive(gauth)
+#auth.authenticate_user()
+#gauth = GoogleAuth()
+#gauth.credentials = GoogleCredentials.get_application_default()
+#drive = GoogleDrive(gauth)
 
 # Download a file based on its file ID.
 #
 # A file ID looks like: laggVyWshwcyP6kEI-y_W3P8D26sz
-file_id = '1V3uWWt1TVMtLPiXZ6miDNXl08t1RoR-G'
-downloaded = drive.CreateFile({'id': file_id})
-print('Downloaded content "{}"'.format(downloaded.GetContentString()))
+#file_id = '1V3uWWt1TVMtLPiXZ6miDNXl08t1RoR-G'
+#downloaded = drive.CreateFile({'id': file_id})
+#print('Downloaded content "{}"'.format(downloaded.GetContentString()))
 
 #This allows drive to access the file 'activations', and subsequently get the functions in that file
-functions = drive.CreateFile({'id':'1V3uWWt1TVMtLPiXZ6miDNXl08t1RoR-G'})
-functions.GetContentFile('activations.py')
+#functions = drive.CreateFile({'id':'1V3uWWt1TVMtLPiXZ6miDNXl08t1RoR-G'})
+#functions.GetContentFile('activations.py')
 
 import numpy as np
 import matplotlib.pyplot as plt
 import os
 import sys
-sys.path.append('/content/gdrive/My Drive/Colab Notebooks/Mach_learn_tests/functions/')
+#sys.path.append('/content/gdrive/My Drive/Colab Notebooks/Mach_learn_tests/functions/')
 from activations import relu, sigmoid, tanh
 from itertools import islice
 from random import randint
@@ -144,23 +144,6 @@ def comp(data, num_neurons, act):
     L_vec.append(L) 
   return L_vec
 
-import tensorflow as tf
-mnist = tf.keras.datasets.mnist
-(train_data,train_labels),(test_data,test_labels) = mnist.load_data()
-
-# Flatten the train_data and test_data for faster computation.
-train_data = train_data.flatten().reshape(60000,784)
-test_data = test_data.flatten().reshape(10000,784)
-
-# If the datatype of the above arrays is int8, convert them to float/int 32/64.
-train_data = np.array(train_data,dtype= 'float32')/255
-test_data = np.array(test_data,dtype= 'float32')/255
-
-#data = train_data[0:100,:]
-#labels = train_labels[0:100]/10
-#data1 = -np.ones((100,1))
-#np.hstack((data,data1))
-#data,labels = batches(data,labels,5)
 
 data,labels = generator_complex(20,4)
 data = data.reshape(20,4)
@@ -179,7 +162,3 @@ for i in range(len(Layers)):
 
 print(np.stack((net[-1].process()[0:10].flatten(), labels[0,0:10].flatten()),axis = 1))
 print(np.mean(labels))
-
-data.shape
-
-net[1].weights
