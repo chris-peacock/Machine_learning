@@ -80,6 +80,12 @@ def batches(data,labels,c=2):
     l = np.array(np.split(labels,c,axis = 0))
     return d, l
 
+#Performs  back propagation on a compiled network; 
+#args = return from 'comp' function
+#D = flattened, batched data (return from 'batches' function)
+#L = batched labels (return from 'batches function')
+#epochs, learn_rate, reg_rate are self explanatory
+
 def backprop(D,L,args,epochs=50,learn_rate=0.1,reg_rate=0.01):
     args = args[::-1]#list(reversed(args))
     #Alter this code to do an update for each sample, rather than update for average.  Update for average causes classification of all datapoints to be the same
@@ -118,17 +124,7 @@ def backprop(D,L,args,epochs=50,learn_rate=0.1,reg_rate=0.01):
     #print('Final loss:', 0.5*np.mean(np.power(args[0].process()-labels_chunk,2)))
     return args[::-1]
 
-def generator_complex(number_examples,number_dimensions=2):
-    data = np.random.uniform(low=0, high=1, size=(number_examples,number_dimensions))
-    labels = np.zeros(number_examples)
-    for i in range(number_examples):
-        if (data[i,0]<=0.5) & (data[i,1]<=0.5):
-          labels[i] = 0
-        else:
-          labels[i] = 1
-        labels = labels.astype(int)
-    return data,labels
-
+#compiles the neural net, given an input list of number of neurons at each layer, combined with a list of activation functions for each
 def comp(data, num_neurons, act):
   print('Data shape: ',(data.shape))
   print('           # Nodes  # weights')
@@ -144,21 +140,34 @@ def comp(data, num_neurons, act):
     L_vec.append(L) 
   return L_vec
 
+#This block runs only if nn_test is the main script, not if it's called by another script
+#Purpose of this block is to test on a very noisy but scalable-dimensional dataset
+if __name__==__main_:
+    def generator_complex(number_examples,number_dimensions=2):
+        data = np.random.uniform(low=0, high=1, size=(number_examples,number_dimensions))
+        labels = np.zeros(number_examples)
+        for i in range(number_examples):
+            if (data[i,0]<=0.5) & (data[i,1]<=0.5):
+              labels[i] = 0
+            else:
+              labels[i] = 1
+            labels = labels.astype(int)
+        return data,labels
 
-data,labels = generator_complex(20,4)
-data = data.reshape(20,4)
-data1 = -np.ones((20,1))
-data = np.hstack((data,data1))
-data,labels = batches(data,labels,10)
-#labels = np.random.rand(10,1)
+    data,labels = generator_complex(20,4)
+    data = data.reshape(20,4)
+    data1 = -np.ones((20,1))
+    data = np.hstack((data,data1))
+    data,labels = batches(data,labels,10)
+    #labels = np.random.rand(10,1)
 
-Layers = comp(data,[6,5,1],[sigmoid,relu,sigmoid])
-net = backprop(data,labels,Layers,epochs=100,learn_rate=2,reg_rate=0.01)
+    Layers = comp(data,[6,5,1],[sigmoid,relu,sigmoid])
+    net = backprop(data,labels,Layers,epochs=100,learn_rate=2,reg_rate=0.01)
 
-fig, (*args) = plt.subplots(1,len(Layers))
-for i in range(len(Layers)):
-  args[0][i].set_title('Layer {} weights'.format(i+1))
-  args[0][i].imshow(net[i].weights)
+    fig, (*args) = plt.subplots(1,len(Layers))
+    for i in range(len(Layers)):
+      args[0][i].set_title('Layer {} weights'.format(i+1))
+      args[0][i].imshow(net[i].weights)
 
-print(np.stack((net[-1].process()[0:10].flatten(), labels[0,0:10].flatten()),axis = 1))
-print(np.mean(labels))
+    print(np.stack((net[-1].process()[0:10].flatten(), labels[0,0:10].flatten()),axis = 1))
+    print(np.mean(labels))
